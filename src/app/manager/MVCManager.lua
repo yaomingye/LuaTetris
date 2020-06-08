@@ -1,5 +1,7 @@
 local MVCManager = {}
 
+--local BlockUtils = require("app.utils.BlockUtils")
+
 MVCManager.modelList = {}
 MVCManager.controllerList = {}
 MVCManager.utilsList = {}
@@ -10,7 +12,7 @@ MVCManager.utilsList = {}
 function MVCManager:getModel(modelName)
     local model = self.modelList[modelName]
     if model == nil then
-        local funStr = "return (" .. modelName .. "Model.view(\"" .. modelName .."\"))"
+        local funStr = "return (" .. modelName .. "Model.new(\"" .. modelName .."\"))"
         model = loadstring(funStr)()
         self.modelList[modelName] = model
     end
@@ -33,10 +35,17 @@ end
 -----------------------------------------
 --- 通过反射机制获取Utils对象
 -----------------------------------------
-function MVCManager:getController(utilName)
+function MVCManager:getUtils(utilName)
     local util = self.utilsList[utilName]
     if util == nil then
-        local funStr = "return (" .. utilName .. "Controller.new(\"" .. utilName .. "\"))"
+        local BlockUtils = require("app.utils.BlockUtils")
+        local test = BlockUtils.new("BlockUtils")
+        print(test:makeKey(1, 2))
+        --print(require("app.utils.BlockUtils"):makeKey(1, 2))
+        local funStr = "require(\"app.utils." .. utilName .. "Utils\")"
+        --local funStr = "print(BlockUtils:makeKey(1, 2))"
+        --local funStr = utilName .. "Utils.new(\"" .. utilName .. "\")"
+
         util = loadstring(funStr)()
         self.controllerList[utilName] = util
     end
